@@ -197,18 +197,26 @@ angular.module('mainApp', [])
 
   $scope.getValue = function getValue(payments, rate, type) {
   	if (!type) {
-  		var type = "compound"
+  		var type = "discrete_compounding"
   	}
   	var value = 0;
-  	if (type == 'compound') {
+  	if (type == 'discrete_compounding') { 
 	  	for (var i = 0; i < payments.length; i++) {
-	  		value += payments[i]['amount'] / Math.pow((1 + rate), payments[i]['timePoint']);
+	  		value += payments[i]['amount'] * Math.pow((1 + rate), payments[i]['timePoint']);
 	  	}
-  	}else if(type == 'continually'){
+  	}else if (type == 'discrete_discounting') { 
+      for (var i = 0; i < payments.length; i++) {
+        value += payments[i]['amount'] / Math.pow((1 + rate), payments[i]['timePoint']);
+      }
+    }else if(type == 'continuous_compounding'){ 
 	  	for (var i = 0; i < payments.length; i++) {
-	  		value += payments[i]['amount'] / Math.pow(Math.E, rate * -1 * payments[i]['timePoint']);
+	  		value += payments[i]['amount'] / Math.pow(Math.E, rate * 1 * payments[i]['timePoint']);
 	  	}
-  	}
+  	}else if(type == 'continuous_discounting'){ 
+      for (var i = 0; i < payments.length; i++) {
+        value += payments[i]['amount'] / Math.pow(Math.E, rate * -1 * payments[i]['timePoint']);
+      }
+    }
   	return value;
   }
 
@@ -229,7 +237,10 @@ angular.module('mainApp', [])
     analysis.term = payments[payments.length-1].timePoint;
     analysis.resultIRR = round_to_decimal_places($scope.IRR(payments, price,-1,1));
   	analysis.resultValue = round_to_decimal_places($scope.getValue(payments, $scope.marketRate/100));
-  	analysis.resultContinuallyValue = round_to_decimal_places($scope.getValue(payments, $scope.marketRate/100, "continually"));
+  	analysis.discrete_compounding = round_to_decimal_places($scope.getValue(payments, $scope.marketRate/100, "discrete_compounding"));
+    analysis.discrete_discounting = round_to_decimal_places($scope.getValue(payments, $scope.marketRate/100, "discrete_discounting"));
+    analysis.continuous_compounding = round_to_decimal_places($scope.getValue(payments, $scope.marketRate/100, "continuous_compounding"));
+    analysis.continuous_discounting = round_to_decimal_places($scope.getValue(payments, $scope.marketRate/100, "continuous_discounting"));
   	analysis.resultDuration = round_to_decimal_places($scope.MacaulayDuration(payments, analysis.resultIRR /100));
     if (payments.length === 1 && payments[0]['zeroCoupon']) {
       analysis.resultSpotRate = $scope.getSpotRate(price, payments[0]['amount'], payments[0]['timePoint'], -10, 10);

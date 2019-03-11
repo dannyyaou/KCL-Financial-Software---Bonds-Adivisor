@@ -1,0 +1,15 @@
+Regression:
+https://github.com/chen0040/js-regression
+
+
+
+Command:
+/usr/local/Cellar/hbase/1.2.9/bin/start-hbase.sh
+
+
+port:
+hbase: 2181
+
+
+CRUD template
+https://www.tutorialrepublic.com/codelab.php?topic=bootstrap&file=crud-data-table-for-database-with-modal-form
